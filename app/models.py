@@ -48,3 +48,6 @@ class Voter(models.Model):
   class Meta:
     unique_together = ('user', 'election_address',)
 
+class Election(models.Model):
+    election = models.TextField()
+    user = models.ForeignKey(User,on_delete=models.CASCADE)

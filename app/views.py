@@ -103,3 +103,11 @@ class voter(APIView):
         user = User.objects.get(pk=pk)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class electionlist(viewsets.ReadOnlyModelViewSet):
+    model = Election
+    serializer_class = electionSerializer
+
+    def get_queryset(self):
+        elections = Election.objects.filter(user=self.request.user.id)
+        return elections

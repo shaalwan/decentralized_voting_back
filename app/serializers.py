@@ -18,4 +18,9 @@ class VoterSerializer(serializers.ModelSerializer):
     model = Voter
     fields = ['user','aadhar','election_address']
   
-
+class electionSerializer(serializers.ModelSerializer):
+  user = userSerializer()
+  class Meta:
+    model = Election
+    fields = ['user','election']
+    
