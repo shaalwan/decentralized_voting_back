@@ -104,6 +104,19 @@ class voter(APIView):
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class createElection(APIView):  
+    def post(self,request):
+        address = request.POST.get('address')
+        companyid = request.POST.get('company')
+        company = User.objects.get(id=companyid)
+        election = Election(election = address,user= company)
+        election.save()
+        serializer = electionSerializer(election)
+        return Response(serializer.data)
+
+
+
 class electionlist(viewsets.ReadOnlyModelViewSet):
     model = Election
     serializer_class = electionSerializer

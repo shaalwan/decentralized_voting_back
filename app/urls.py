@@ -12,7 +12,8 @@ urlpatterns = [
   path('company/register',companyRegister.as_view()),
   path('company/authenticate', companyAuthenticate.as_view()),
 
-  path('company/elections',electionlist.as_view({'get':'list'}))
+  path('company/elections',electionlist.as_view({'get':'list'})),
+  path('election/create',createElection.as_view())
 #candidate
 #  path('candidate/register',candidateRegister.as_view()),
 ]

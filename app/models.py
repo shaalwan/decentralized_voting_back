@@ -48,6 +48,8 @@ class Voter(models.Model):
   class Meta:
     unique_together = ('user', 'election_address',)
 
+
 class Election(models.Model):
-    election = models.TextField()
+    election = models.CharField(max_length=256,blank = False,null = False)
     user = models.ForeignKey(User,on_delete=models.CASCADE)
+    is_active = models.BooleanField(default = True)
