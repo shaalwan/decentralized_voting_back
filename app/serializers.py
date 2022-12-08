@@ -22,5 +22,5 @@ class electionSerializer(serializers.ModelSerializer):
   user = userSerializer()
   class Meta:
     model = Election
-    fields = ['user','election']
+    fields = ['user','election','is_active']
     

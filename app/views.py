@@ -4,10 +4,37 @@ from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework import status,viewsets
 from django.http.response import Http404
-# Create your views here.()
 
 from .models import *
 from .serializers import *
+
+
+class companyRegister(APIView):
+  def post(self,request):
+
+    email = request.POST.get('email')
+    password = request.POST.get('password')
+    
+    company = User.objects.create_user(email,password)
+    company.is_company = True
+    company.save()
+
+    serializer = userSerializer(company)
+    return Response(serializer.data)
+
+class companyAuthenticate(APIView):
+  def post(self, request, format=None):
+        data = request.data
+        email = data['email']
+        password = data['password']
+        user = authenticate(username=email, password=password)
+        if user is not None:
+            if user.is_company == True:
+                serializer = userSerializer(user)
+                return Response(serializer.data)
+            return Response({"Error": "not a company"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"Error": "invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class voterRegister(APIView):
   def post(self,request):
@@ -25,19 +52,6 @@ class voterRegister(APIView):
     serialzier = VoterSerializer(voter)
     return Response(serialzier.data)
 
-class companyRegister(APIView):
-  def post(self,request):
-
-    email = request.POST.get('email')
-    password = request.POST.get('password')
-    
-    company = User.objects.create_user(email,password)
-    company.is_company = True
-    company.save()
-
-    serializer = userSerializer(company)
-    return Response(serializer.data)
-
 class voterAuthenticate(APIView):
   def post(self, request, format=None):
         data = request.data
@@ -53,27 +67,6 @@ class voterAuthenticate(APIView):
                 return Response(serialzier.data)
             return Response({"Error": "not a voter"}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"Error": "invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
-
-class companyAuthenticate(APIView):
-  def post(self, request, format=None):
-        data = request.data
-        email = data['email']
-        password = data['password']
-        user = authenticate(username=email, password=password)
-        if user is not None:
-            if user.is_company == True:
-                serializer = userSerializer(user)
-                return Response(serializer.data)
-            return Response({"Error": "not a company"}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({"Error": "invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class voterList(viewsets.ReadOnlyModelViewSet):
-    model = Voter
-    serializer_class = VoterSerializer
-    def get_queryset(self):
-        voters = Voter.objects.all()
-        return voters
 
 class voter(APIView):
 
@@ -104,19 +97,36 @@ class voter(APIView):
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class voterList(viewsets.ReadOnlyModelViewSet):
+    model = Voter
+    serializer_class = VoterSerializer
+    def get_queryset(self):
+        voters = Voter.objects.filter()
+        return voters
+
+
 
 class createElection(APIView):  
     def post(self,request):
         address = request.POST.get('address')
-        companyid = request.POST.get('company')
+        companyid = request.POST.get('companyid')
         company = User.objects.get(id=companyid)
         election = Election(election = address,user= company)
         election.save()
         serializer = electionSerializer(election)
         return Response(serializer.data)
 
-
-
+class endElection(APIView):
+    def put(self,request):
+        address = request.POST.get('address')
+        election = Election.objects.get(election = address)
+        d = {'is_active':'False'}
+        serializer = electionSerializer(election, data=d, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 class electionlist(viewsets.ReadOnlyModelViewSet):
     model = Election
     serializer_class = electionSerializer
@@ -124,3 +134,4 @@ class electionlist(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         elections = Election.objects.filter(user=self.request.user.id)
         return elections
+

@@ -41,15 +41,21 @@ class User(AbstractUser):
   is_company = models.BooleanField(default = False)
   REQUIRED_FIELDS = []
 
+  def save(self, *args, **kwargs):
+        super().full_clean()
+        super().save(*args, **kwargs)
+
+
 class Voter(models.Model):
   user = models.ForeignKey(User,on_delete=models.CASCADE)
-  aadhar = models.BigIntegerField(validators=[MaxLengthValidator(1000000000000000),MinLengthValidator(9999999999999999)],unique= True)
+  aadhar = models.BigIntegerField(validators=[MaxLengthValidator(100000000000),MinLengthValidator(999999999999)],unique= True)
   election_address =  models.CharField(max_length=256,blank = False,null = False)
   class Meta:
-    unique_together = ('user', 'election_address',)
+    unique_together = ('user', 'election_address')
 
 
 class Election(models.Model):
-    election = models.CharField(max_length=256,blank = False,null = False)
+    election = models.CharField(max_length=256,blank = False,null = False,unique=True)
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     is_active = models.BooleanField(default = True)
+

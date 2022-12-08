@@ -13,7 +13,8 @@ urlpatterns = [
   path('company/authenticate', companyAuthenticate.as_view()),
 
   path('company/elections',electionlist.as_view({'get':'list'})),
-  path('election/create',createElection.as_view())
+  path('election/create',createElection.as_view()),
+  path('election/end',endElection.as_view()),
 #candidate
 #  path('candidate/register',candidateRegister.as_view()),
 ]
