@@ -10,6 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+
+"""
+--------------IMPORTANT------------------------------------------------
+please commment line number 52,58, and 149-152 for removal of whitenoise dependency
+"""
+
+
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,7 +33,7 @@ SECRET_KEY = 'django-insecure-#hy1j^+(1f9--_xc*c3$r&r+1@x8mrn$vv!%4e-saxhpqwbka*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['kamanchee.azurewebsites.net','*']
 
 
 # Application definition
@@ -40,11 +48,14 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'app',
+    'cropter',
+    'whitenoise',
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -130,3 +141,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+
+# For Whitenoise
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+CSRF_TRUSTED_ORIGINS=["https://kamanchee.azurewebsites.net"]
